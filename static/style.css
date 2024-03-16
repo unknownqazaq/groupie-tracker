@@ -1,0 +1,42 @@
+.body {
+     background-color: black;
+    color: white;
+}
+/* Стили для красивого оформления */
+.artist-info {
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #222; /* Цвет фона для контейнера с информацией об артисте */
+    font-family: 'Arial', sans-serif; /* Изменение шрифта */
+    font-size: 14px; /* Изменение размера шрифта */
+}
+.artist-info img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 50%; /* Делаем изображение круглым */
+    border: 3px solid black; /* Добавляем черную рамку */
+    transition: transform 0.3s; /* Добавляем анимацию при наведении */
+}
+.artist-info img:hover {
+    transform: scale(1.1); /* Увеличиваем изображение при наведении мыши */
+}
+.artist-info h2 {
+    margin-top: 0;
+    font-size: 18px; /* Изменение размера заголовка */
+}
+.artist-info p {
+    margin: 5px 0;
+}
+
+/* Стили для кнопки */
+.custom-button {
+    background-color: #222; /* Устанавливаем цвет фона кнопки такой же, как у контейнера */
+    color: white; /* Устанавливаем цвет текста кнопки */
+    border: none; /* Убираем границу кнопки */
+    padding: 0; /* Убираем отступы внутри кнопки */
+    cursor: pointer; /* Устанавливаем курсор в виде указателя при наведении на кнопку */
+    transition: background-color 0.3s; /* Добавляем плавное изменение цвета фона при наведении */
+}
+.custom-button:hover {
+    background-color: #444; /* Изменяем цвет фона кнопки при наведении мыши */
+}

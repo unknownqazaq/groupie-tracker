@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Info</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .artist-card {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .artist-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 50%;
+        }
+
+        .artist-card h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Artist Info</h1>
+    <div id="artistInfo"></div>
+</div>
+
+<script>
+    window.onload = function() {
+        // Получаем ID артиста из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const artistId = urlParams.get('id');
+
+        // Проверяем, есть ли ID артиста в URL
+        if (artistId) {
+            // Выполняем запрос к серверу для получения информации об артисте
+            fetch(`/artist?id=${artistId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(artist => {
+                    // Отображаем информацию об артисте
+                    renderArtist(artist);
+                })
+                .catch(error => {
+                    console.error('Error fetching artist info:', error);
+                });
+        } else {
+            console.error('Artist ID is missing in the URL');
+        }
+    }
+
+    function renderArtist(artist) {
+        const artistInfoDiv = document.getElementById('artistInfo');
+
+        // Создаем карточку артиста
+        const artistCard = document.createElement('div');
+        artistCard.classList.add('artist-card');
+
+        // Заполняем карточку информацией об артисте
+        artistCard.innerHTML = `
+                <h2>${artist.name}</h2>
+                <img src="${artist.image}" alt="${artist.name}">
+                <p><strong>Members:</strong> ${artist.members.join(', ')}</p>
+                <p><strong>Creation Date:</strong> ${artist.creationDate}</p>
+                <p><strong>First Album:</strong> ${artist.firstAlbum}</p>
+            `;
+
+        // Добавляем карточку артиста в область отображения информации об артисте
+        artistInfoDiv.appendChild(artistCard);
+    }
+</script>
+</body>
+</html>

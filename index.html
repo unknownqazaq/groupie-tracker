@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GROUPIE-TRACKER</title>
+    <link rel="stylesheet" href="static/style.css" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+</head>
+<body class="body text-center">
+<h2 class="mt-5 mb-5">GROUPIE-TRACKER</h2>
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-4 g-4" id="artistInfo">
+    </div>
+</div>
+
+<script>
+    // Функция для выполнения fetch запроса и отображения информации об артисте
+    function fetchArtistInfo() {
+        fetch('/artists')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Вывод данных в консоль для проверки
+                console.log(data);
+
+                // Получение элемента, в который будем добавлять информацию об артистах
+                const artistInfoDiv = document.getElementById('artistInfo');
+
+                // Цикл для обхода всех артистов в полученных данных
+                data.forEach(artist => {
+                    // Создаем новый div для каждого артиста
+                    const artistDiv = document.createElement('div');
+                    artistDiv.classList.add('col'); // Добавляем класс для столбца Bootstrap
+
+                    // Заполняем div информацией об артисте
+                    artistDiv.innerHTML = `
+            <div class="artist-info text-center">
+                <h2>${artist.name}</h2>
+              <button onclick="infoArtist(${artist.id})" class="custom-button"> <img src="${artist.image}" alt="${artist.name}"> </button>
+
+                <p class="d-none">${artist.id}</p>
+            </div>
+        `;
+
+                    // Добавляем созданный div с информацией об артисте в общий контейнер
+                    artistInfoDiv.appendChild(artistDiv);
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+
+    }
+
+    function infoArtist(artistId) {
+        // Выполнение fetch запроса для получения данных об артисте по его ID
+        fetch(`/artistInfo?id=${artistId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(artistData => {
+                // Переход на страницу артиста и вывод всех данных
+                // Для перехода на страницу артиста можно использовать window.location.href,
+                // а для вывода данных на странице можно использовать DOM manipulation
+                window.location.href = `/artistInfo.html?id=${artistData.id}`;
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+
+    // Вызов функции для получения информации об артисте при загрузке страницы
+    window.onload = fetchArtistInfo;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
