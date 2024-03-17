@@ -1,87 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artist Info</title>
+    <title>Пример шаблона Go</title>
+    <!-- Подключение стилей Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        /* Основные стили */
+        body {
+            background-color: black;
+            color: white;
             padding: 20px;
         }
 
-        .artist-card {
-            border: 1px solid #ccc;
+        /* Стили для контейнера с информацией об артисте */
+        .artist-info {
+            padding: 20px;
             border-radius: 5px;
-            padding: 10px;
+            background-color: #222;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            max-width: 800px;
+            margin: 0 auto;
             margin-bottom: 20px;
         }
 
-        .artist-card img {
+        /* Стили для изображения артиста */
+        .artist-info img {
             max-width: 100%;
             height: auto;
             border-radius: 50%;
+            border: 3px solid black;
+            transition: transform 0.3s;
+            margin-bottom: 20px;
         }
 
-        .artist-card h2 {
+        /* Анимация увеличения изображения при наведении */
+        .artist-info img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Стили для заголовка */
+        .artist-info h1 {
             margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Стили для параграфов */
+        .artist-info p {
+            margin: 5px 0;
+            margin-bottom: 10px;
+        }
+
+        /* Стили для заголовка "Связи" */
+        .relation-header {
+            margin-top: 0;
+            font-size: 20px;
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        /* Стили для списка связей */
+        .relation-list {
+            background-color: #222;
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Стили для элементов списка связей */
+        .relation-item {
+            color: white;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Artist Info</h1>
-    <div id="artistInfo"></div>
-</div>
-
-<script>
-    window.onload = function() {
-        // Получаем ID артиста из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const artistId = urlParams.get('id');
-
-        // Проверяем, есть ли ID артиста в URL
-        if (artistId) {
-            // Выполняем запрос к серверу для получения информации об артисте
-            fetch(`/artist?id=${artistId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(artist => {
-                    // Отображаем информацию об артисте
-                    renderArtist(artist);
-                })
-                .catch(error => {
-                    console.error('Error fetching artist info:', error);
-                });
-        } else {
-            console.error('Artist ID is missing in the URL');
-        }
-    }
-
-    function renderArtist(artist) {
-        const artistInfoDiv = document.getElementById('artistInfo');
-
-        // Создаем карточку артиста
-        const artistCard = document.createElement('div');
-        artistCard.classList.add('artist-card');
-
-        // Заполняем карточку информацией об артисте
-        artistCard.innerHTML = `
-                <h2>${artist.name}</h2>
-                <img src="${artist.image}" alt="${artist.name}">
-                <p><strong>Members:</strong> ${artist.members.join(', ')}</p>
-                <p><strong>Creation Date:</strong> ${artist.creationDate}</p>
-                <p><strong>First Album:</strong> ${artist.firstAlbum}</p>
-            `;
-
-        // Добавляем карточку артиста в область отображения информации об артисте
-        artistInfoDiv.appendChild(artistCard);
-    }
-</script>
+    <div class="artist-info">
+        <h1>{{.Artist.Name}}</h1>
+        <img src="{{.Artist.Image}}" alt="Изображение артиста">
+        <p><strong>Члены:</strong> {{range .Artist.Members}}{{.}}, {{end}}</p>
+        <p><strong>Дата создания:</strong> {{.Artist.CreationDate}}</p>
+        <p><strong>Первый альбом:</strong> {{.Artist.FirstAlbum}}</p>
+    </div>
+    <div class="relation-list">
+        <h2 class="relation-header">Связи:</h2>
+        <ul>
+            {{range $location, $dates := .Relation.DatesLocations}}
+                <li class="relation-item">
+                    <strong>{{ $location }}:</strong>
+                    <ul>
+                        {{range $dates}}
+                            <li>{{.}}</li>
+                        {{end}}
+                    </ul>
+                </li>
+            {{end}}
+        </ul>
+    </div>
 </body>
 </html>

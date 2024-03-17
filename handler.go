@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	artistsURL  = "https://groupietrackers.herokuapp.com/api/artists"
-	relationURL = "https://groupietrackers.herokuapp.com/api/relation"
+	artistsURL = "https://groupietrackers.herokuapp.com/api/artists"
 )
 
 func HandleArtists(w http.ResponseWriter, r *http.Request) {
@@ -52,16 +51,35 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получаем данные об артистах из внешнего API
-	resp, err := http.Get(artistsURL)
+	respArtists, err := http.Get(artistsURL)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer resp.Body.Close()
+	defer respArtists.Body.Close()
 
-	// Декодируем ответ JSON
+	// Получаем данные о связях из внешнего API
+	artistIDStr := strconv.Itoa(artistID)
+	url := "https://groupietrackers.herokuapp.com/api/relation/" + artistIDStr
+	respRelation, err := http.Get(url)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer respRelation.Body.Close()
+
+	// Декодируем данные в структуру Relation
+	var relationData *Relation
+	err = json.NewDecoder(respRelation.Body).Decode(&relationData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Декодируем ответы JSON
 	var artistData []Artist
-	err = json.NewDecoder(resp.Body).Decode(&artistData)
+	err = json.NewDecoder(respArtists.Body).Decode(&artistData)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,25 +93,27 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-
 	// Проверяем, найден ли артист
 	if selectedArtist == nil {
 		http.Error(w, "Artist not found", http.StatusNotFound)
 		return
 	}
 
-	// Парсим дополнительные данные об артисте из внешнего API
-	// Эти данные могут быть, например, из relationURL
-	// В данном примере пропущено, так как эти данные не предоставлены
-
-	// Отображаем HTML шаблон с данными об артисте
+	// Отображаем HTML шаблон с данными об артисте и связях
 	tmplPath := filepath.Join("artistInfo.html")
 	tmpl, err := template.ParseFiles(tmplPath)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	if err := tmpl.Execute(w, selectedArtist); err != nil {
+
+	// Создаем структуру, содержащую информацию об артисте и связях
+	artistInfo := &ArtistInfo{
+		Artist:   selectedArtist,
+		Relation: relationData,
+	}
+
+	if err := tmpl.Execute(w, artistInfo); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -105,8 +125,6 @@ func PageHandler(w http.ResponseWriter, r *http.Request) {
 		// Determine the template path based on the requested URL
 		if r.URL.Path == "/" {
 			tmplPath = filepath.Join("index.html")
-		} else if r.URL.Path == "artistInfo" {
-			tmplPath = filepath.Join("artistInfo.html")
 		} else {
 			fmt.Printf("Unknown URL path: %s", r.URL.Path)
 			return
