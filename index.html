@@ -59,25 +59,10 @@
 
     }
 
-    function infoArtist(artistId) {
-        // Выполнение fetch запроса для получения данных об артисте по его ID
-        fetch(`/artistInfo?id=${artistId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(artistData => {
-                // Переход на страницу артиста и вывод всех данных
-                // Для перехода на страницу артиста можно использовать window.location.href,
-                // а для вывода данных на странице можно использовать DOM manipulation
-                window.location.href = `/artistInfo.html?id=${artistData.id}`;
-            })
-            .catch(error => {
-                console.error('There was a problem with your fetch operation:', error);
-            });
-    }
+   function infoArtist(artistId) {
+    // Перенаправляем пользователя на страницу с информацией об артисте
+    window.location.href = `/artistInfo?id=${artistId}`;
+}
 
 
     // Вызов функции для получения информации об артисте при загрузке страницы
