@@ -10,12 +10,13 @@ import (
 )
 
 const (
-	artistsURL = "https://groupietrackers.herokuapp.com/api/artists"
+	artistsURL  = "https://groupietrackers.herokuapp.com/api/artists/"
+	relationURL = "https://groupietrackers.herokuapp.com/api/relation/"
 )
 
 func HandleArtists(w http.ResponseWriter, r *http.Request) {
 	// Получаем данные об артистах из внешнего API
-	resp, err := http.Get(artistsURL)
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/artists")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -42,6 +43,38 @@ func HandleArtists(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func fetchArtistData(artistID int) (*Artist, error) {
+	artistIDStr := strconv.Itoa(artistID)
+	resp, err := http.Get(artistsURL + artistIDStr)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var artistData *Artist
+	if err := json.NewDecoder(resp.Body).Decode(&artistData); err != nil {
+		return nil, err
+	}
+
+	return artistData, nil
+}
+
+func fetchRelationData(artistID int) (*Relation, error) {
+	artistIDStr := strconv.Itoa(artistID)
+	resp, err := http.Get(relationURL + artistIDStr)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var relationData *Relation
+	if err := json.NewDecoder(resp.Body).Decode(&relationData); err != nil {
+		return nil, err
+	}
+
+	return relationData, nil
+}
+
 func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 	// Парсим ID артиста из URL запроса
 	artistID, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -50,52 +83,17 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Получаем данные об артистах из внешнего API
-	respArtists, err := http.Get(artistsURL)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer respArtists.Body.Close()
-
-	// Получаем данные о связях из внешнего API
-	artistIDStr := strconv.Itoa(artistID)
-	url := "https://groupietrackers.herokuapp.com/api/relation/" + artistIDStr
-	respRelation, err := http.Get(url)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer respRelation.Body.Close()
-
-	// Декодируем данные в структуру Relation
-	var relationData *Relation
-	err = json.NewDecoder(respRelation.Body).Decode(&relationData)
+	// Получаем данные об артисте
+	artistData, err := fetchArtistData(artistID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Декодируем ответы JSON
-	var artistData []Artist
-	err = json.NewDecoder(respArtists.Body).Decode(&artistData)
+	// Получаем данные о связях
+	relationData, err := fetchRelationData(artistID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Ищем артиста по ID
-	var selectedArtist *Artist
-	for _, artist := range artistData {
-		if artist.ID == artistID {
-			selectedArtist = &artist
-			break
-		}
-	}
-	// Проверяем, найден ли артист
-	if selectedArtist == nil {
-		http.Error(w, "Artist not found", http.StatusNotFound)
 		return
 	}
 
@@ -109,7 +107,7 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 
 	// Создаем структуру, содержащую информацию об артисте и связях
 	artistInfo := &ArtistInfo{
-		Artist:   selectedArtist,
+		Artist:   artistData,
 		Relation: relationData,
 	}
 

@@ -12,93 +12,115 @@
             padding: 20px;
         }
 
-        /* Стили для контейнера с информацией об артисте */
-        .artist-info {
-            padding: 20px;
-            border-radius: 5px;
-            background-color: #222;
-            font-family: 'Arial', sans-serif;
-            font-size: 14px;
-            max-width: 800px;
-            margin: 0 auto;
+        /* Стили для таблиц */
+        table {
+            width: 100%;
             margin-bottom: 20px;
+        }
+
+        table th {
+            background-color: #343a40;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table td {
+            padding: 10px;
+            text-align: center;
+            color: white; /* Белый текст */
+        }
+
+        /* Стили для заголовков */
+        .title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white; /* Белый текст */
         }
 
         /* Стили для изображения артиста */
-        .artist-info img {
-            max-width: 100%;
+        .artist-image {
+            max-width: 200px;
             height: auto;
             border-radius: 50%;
             border: 3px solid black;
-            transition: transform 0.3s;
+            margin: 0 auto;
+            display: block;
             margin-bottom: 20px;
-        }
-
-        /* Анимация увеличения изображения при наведении */
-        .artist-info img:hover {
-            transform: scale(1.1);
-        }
-
-        /* Стили для заголовка */
-        .artist-info h1 {
-            margin-top: 0;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        /* Стили для параграфов */
-        .artist-info p {
-            margin: 5px 0;
-            margin-bottom: 10px;
-        }
-
-        /* Стили для заголовка "Связи" */
-        .relation-header {
-            margin-top: 0;
-            font-size: 20px;
-            text-align: center;
-            color: white;
-            margin-bottom: 10px;
         }
 
         /* Стили для списка связей */
         .relation-list {
-            background-color: #222;
-            border-radius: 5px;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            text-align: left;
         }
 
-        /* Стили для элементов списка связей */
         .relation-item {
-            color: white;
             margin-bottom: 10px;
+            color: white; /* Белый текст */
+        }
+
+        .relation-item strong {
+            display: inline-block;
+            width: 150px;
+            color: white; /* Белый текст */
         }
     </style>
 </head>
 <body>
-    <div class="artist-info">
-        <h1>{{.Artist.Name}}</h1>
-        <img src="{{.Artist.Image}}" alt="Изображение артиста">
-        <p><strong>Члены:</strong> {{range .Artist.Members}}{{.}}, {{end}}</p>
-        <p><strong>Дата создания:</strong> {{.Artist.CreationDate}}</p>
-        <p><strong>Первый альбом:</strong> {{.Artist.FirstAlbum}}</p>
-    </div>
-    <div class="relation-list">
-        <h2 class="relation-header">Связи:</h2>
-        <ul>
+    <div class="container">
+        <div class="title">{{.Artist.Name}}</div>
+        <img src="{{.Artist.Image}}" alt="Изображение артиста" class="artist-image">
+        <table class="table">
+            <tr>
+                <th colspan="2">Информация об артисте</th>
+            </tr>
+            <tr>
+                <td><strong>Члены:</strong></td>
+                <td>{{range .Artist.Members}}{{.}}, {{end}}</td>
+            </tr>
+            <tr>
+                <td><strong>Дата создания:</strong></td>
+                <td>{{.Artist.CreationDate}}</td>
+            </tr>
+            <tr>
+                <td><strong>Первый альбом:</strong></td>
+                <td>{{.Artist.FirstAlbum}}</td>
+            </tr>
+        </table>
+        <table class="table">
+            <tr>
+                <th colspan="2">Связи</th>
+            </tr>
             {{range $location, $dates := .Relation.DatesLocations}}
-                <li class="relation-item">
-                    <strong>{{ $location }}:</strong>
-                    <ul>
-                        {{range $dates}}
-                            <li>{{.}}</li>
-                        {{end}}
-                    </ul>
-                </li>
+                <tr>
+                    <td><strong>{{$location}}:</strong></td>
+                    <td>
+                        <ul class="relation-list">
+                            {{range $dates}}
+                                <li class="relation-item">{{.}}</li>
+                            {{end}}
+                        </ul>
+                    </td>
+                </tr>
             {{end}}
-        </ul>
+        </table>
     </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Функция для управления отображением элементов страницы
+        function showPageElements() {
+            document.querySelector('.container').style.display = 'block';
+        }
+
+        // Вызываем функцию после полной загрузки страницы
+        window.onload = function() {
+            showPageElements();
+        };
+    </script>
 </body>
 </html>
