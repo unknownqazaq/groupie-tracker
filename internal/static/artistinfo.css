@@ -1,0 +1,59 @@
+
+/* Основные стили */
+body {
+    background-color: black;
+    color: white;
+    padding: 20px;
+}
+
+/* Стили для таблицы */
+table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #aaa;
+    padding: 8px;
+}
+
+th {
+    background-color: #000000;
+    text-align: center;
+}
+
+/* Стили для заголовка */
+.title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Стили для изображения артиста */
+.artist-image {
+    max-width: 200px;
+    height: auto;
+    border-radius: 50%;
+    border: 3px solid black;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Стили для списка связей */
+.relation-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.relation-item {
+    margin-bottom: 10px;
+}
+
+.relation-item strong {
+    display: inline-block;
+    width: 150px;
+}

@@ -1,4 +1,4 @@
-package groupie_tracker
+package server
 
 import (
 	"context"
@@ -11,11 +11,14 @@ type Server struct {
 }
 
 func (s *Server) Run(port string) error {
+	router := SetupRoutes()
+
 	s.httpServer = &http.Server{
 		Addr:           ":" + port,
 		MaxHeaderBytes: 1 << 20, //1MB
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
+		Handler:        router,
 	}
 	return s.httpServer.ListenAndServe()
 }
@@ -24,16 +27,3 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	return s.httpServer.Shutdown(ctx)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

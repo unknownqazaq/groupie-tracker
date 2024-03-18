@@ -40,3 +40,50 @@
 .custom-button:hover {
     background-color: #444; /* Изменяем цвет фона кнопки при наведении мыши */
 }
+.body {
+    background-color: black;
+    color: white;
+    padding: 20px;
+}
+
+.artist-info {
+    background-color: #222;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.artist-info h2 {
+    color: white;
+}
+
+.artist-info img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 50%;
+    border: 3px solid black;
+    margin-bottom: 10px;
+}
+
+.custom-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.custom-button:focus {
+    outline: none;
+}
+
+.custom-button img {
+    transition: transform 0.3s;
+}
+
+.custom-button:hover img {
+    transform: scale(1.1);
+}
+
+/* Убираем фон кнопок при наведении */
+.custom-button:hover {
+    background-color: transparent;
+}

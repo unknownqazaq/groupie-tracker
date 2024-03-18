@@ -1,8 +1,9 @@
-package groupie_tracker
+package server
 
 import (
 	"encoding/json"
 	"fmt"
+	"groupie-tracker"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -43,7 +44,7 @@ func HandleArtists(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fetchArtistData(artistID int) (*Artist, error) {
+func fetchArtistData(artistID int) (*groupie_tracker.Artist, error) {
 	artistIDStr := strconv.Itoa(artistID)
 	resp, err := http.Get(artistsURL + artistIDStr)
 	if err != nil {
@@ -51,7 +52,7 @@ func fetchArtistData(artistID int) (*Artist, error) {
 	}
 	defer resp.Body.Close()
 
-	var artistData *Artist
+	var artistData *groupie_tracker.Artist
 	if err := json.NewDecoder(resp.Body).Decode(&artistData); err != nil {
 		return nil, err
 	}
@@ -59,7 +60,7 @@ func fetchArtistData(artistID int) (*Artist, error) {
 	return artistData, nil
 }
 
-func fetchRelationData(artistID int) (*Relation, error) {
+func fetchRelationData(artistID int) (*groupie_tracker.Relation, error) {
 	artistIDStr := strconv.Itoa(artistID)
 	resp, err := http.Get(relationURL + artistIDStr)
 	if err != nil {
@@ -67,7 +68,7 @@ func fetchRelationData(artistID int) (*Relation, error) {
 	}
 	defer resp.Body.Close()
 
-	var relationData *Relation
+	var relationData *groupie_tracker.Relation
 	if err := json.NewDecoder(resp.Body).Decode(&relationData); err != nil {
 		return nil, err
 	}
@@ -79,7 +80,7 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 	// Парсим ID артиста из URL запроса
 	artistID, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+		DefaultHandler(w, r)
 		return
 	}
 
@@ -99,7 +100,7 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 
 		// Отображаем HTML шаблон с данными об артисте и связях
-		tmplPath := filepath.Join("artistInfo.html")
+		tmplPath := filepath.Join("internal", "template", "artistInfo.html")
 		tmpl, err := template.ParseFiles(tmplPath)
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -107,7 +108,7 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Создаем структуру, содержащую информацию об артисте и связях
-		artistInfo := &ArtistInfo{
+		artistInfo := &groupie_tracker.ArtistInfo{
 			Artist:   artistData,
 			Relation: relationData,
 		}
@@ -125,10 +126,10 @@ func PageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		var tmplPath string
 		// Determine the template path based on the requested URL
-		if r.URL.Path == "/" {
-			tmplPath = filepath.Join("index.html")
+		if r.URL.Path == "/index.html" || r.URL.Path == "/" {
+			tmplPath = filepath.Join("internal", "template", "index.html")
 		} else {
-			fmt.Printf("Unknown URL path: %s", r.URL.Path)
+			DefaultHandler(w, r)
 			return
 		}
 		tmpl, err := template.ParseFiles(tmplPath)
@@ -144,5 +145,27 @@ func PageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		http.Error(w, "Status Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// DefaultHandler обрабатывает запросы к неопределенным маршрутам.
+func DefaultHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Request to unknown URL: %s", r.URL.Path)
+	// Устанавливаем статус 404
+	w.WriteHeader(http.StatusNotFound)
+	// Загружаем страницу 404.html
+	tmplPath := filepath.Join("internal", "template", "404.html")
+	tmpl, err := template.ParseFiles(tmplPath)
+	if err != nil {
+		fmt.Printf("Error parsing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Отправляем страницу 404.html
+	if err := tmpl.Execute(w, nil); err != nil {
+		fmt.Printf("Error executing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 }
