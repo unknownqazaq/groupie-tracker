@@ -28,7 +28,7 @@ canvas {
 
 /* Стили для кнопки */
 .home-button {
-    background-color: #007bff;
+    background-color: #222222;
     color: #fff;
     border: none;
     padding: 20px 40px; /* Задайте нужные размеры для кнопки */
@@ -40,5 +40,5 @@ canvas {
 }
 
 .home-button:hover {
-    background-color: #0056b3;
+    background-color: #222222;
 }
