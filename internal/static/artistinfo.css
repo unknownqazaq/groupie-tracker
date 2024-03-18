@@ -18,7 +18,7 @@ th, td {
 }
 
 th {
-    background-color: #000000;
+    background-color: #222222;
     text-align: center;
 }
 
@@ -36,7 +36,7 @@ th {
     max-width: 200px;
     height: auto;
     border-radius: 50%;
-    border: 3px solid black;
+    border: 3px solid #222222;
     margin: 0 auto;
     display: block;
     margin-bottom: 20px;
@@ -61,9 +61,13 @@ th {
 
 /* Стили для ссылки */
 .gt-artist-info {
-!important;text-decoration: none; /* Убираем подчеркивание */
     color: white; /* Устанавливаем цвет текста */
     transition: color 0.3s; /* Добавляем плавный переход цвета */
+}
+
+
+.text-center a {
+     text-decoration: none
 }
 
 /* Стили для ссылки при наведении */
