@@ -96,24 +96,28 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if r.Method == http.MethodGet {
 
-	// Отображаем HTML шаблон с данными об артисте и связях
-	tmplPath := filepath.Join("artistInfo.html")
-	tmpl, err := template.ParseFiles(tmplPath)
-	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+		// Отображаем HTML шаблон с данными об артисте и связях
+		tmplPath := filepath.Join("artistInfo.html")
+		tmpl, err := template.ParseFiles(tmplPath)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 
-	// Создаем структуру, содержащую информацию об артисте и связях
-	artistInfo := &ArtistInfo{
-		Artist:   artistData,
-		Relation: relationData,
-	}
+		// Создаем структуру, содержащую информацию об артисте и связях
+		artistInfo := &ArtistInfo{
+			Artist:   artistData,
+			Relation: relationData,
+		}
 
-	if err := tmpl.Execute(w, artistInfo); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		if err := tmpl.Execute(w, artistInfo); err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		http.Error(w, "Status Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
 
