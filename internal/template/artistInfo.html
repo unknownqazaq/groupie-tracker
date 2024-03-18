@@ -1,122 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Пример шаблона Go</title>
+    <title>Artist info</title>
     <!-- Подключение стилей Bootstrap -->
-    <link rel="stylesheet" href="../static/artistinfo.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        /* Основные стили */
-        body {
-            background-color: black;
-            color: white;
-            padding: 20px;
-        }
-
-        /* Стили для таблицы */
-        table {
-            width: 100%;
-            margin-bottom: 20px;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #aaa;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #000000;
-            text-align: center;
-        }
-
-        /* Стили для заголовка */
-        .title {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        /* Стили для изображения артиста */
-        .artist-image {
-            max-width: 200px;
-            height: auto;
-            border-radius: 50%;
-            border: 3px solid black;
-            margin: 0 auto;
-            display: block;
-            margin-bottom: 20px;
-        }
-
-        /* Стили для списка связей */
-        .relation-list {
-            list-style: none;
-            padding-left: 0;
-            margin: 0;
-            text-align: left;
-        }
-
-        .relation-item {
-            margin-bottom: 10px;
-        }
-
-        .relation-item strong {
-            display: inline-block;
-            width: 150px;
-        }
-    </style>
+    <link rel="stylesheet" href="../static/artistinfo.css">
 </head>
 <body>
-    <div class="container">
-        <div class="title">{{.Artist.Name}}</div>
-        <img src="{{.Artist.Image}}" alt="Изображение артиста" class="artist-image">
-        <table>
-            <tr>
-                <th colspan="2">Информация об артисте</th>
-            </tr>
-            <tr>
-                <td><strong>Члены:</strong></td>
-                <td>{{range .Artist.Members}}{{.}}, {{end}}</td>
-            </tr>
-            <tr>
-                <td><strong>Дата создания:</strong></td>
-                <td>{{.Artist.CreationDate}}</td>
-            </tr>
-            <tr>
-                <td><strong>Первый альбом:</strong></td>
-                <td>{{.Artist.FirstAlbum}}</td>
-            </tr>
-        </table>
-        <table>
-            <tr>
-                <th colspan="2">Связи</th>
-            </tr>
-            {{range $location, $dates := .Relation.DatesLocations}}
-                <tr>
-                    <td><strong>{{$location}}:</strong></td>
-                    <td>
-                        <ul class="relation-list">
-                            {{range $dates}}
-                                <li class="relation-item">{{.}}</li>
-                            {{end}}
-                        </ul>
-                    </td>
-                </tr>
-            {{end}}
-        </table>
+<div class="container">
+    <div class="text-center">
+        <a href="index.html"><h2 class="mt-5 mb-5 gt-artist-info"> GROUPIE-TRACKER </h2></a>
     </div>
 
-    <!-- JavaScript -->
-    <script>
-        // Функция для управления отображением элементов страницы
-        function showPageElements() {
-            document.querySelector('.container').style.display = 'block';
-        }
-
-        // Вызываем функцию после полной загрузки страницы
-        window.onload = function() {
-            showPageElements();
-        };
-    </script>
+    <div class="title">{{.Artist.Name}}</div>
+    <img src="{{.Artist.Image}}" alt="Изображение артиста" class="artist-image">
+    <table>
+        <tr>
+            <th colspan="2">Информация об артисте</th>
+        </tr>
+        <tr>
+            <td><strong>Члены:</strong></td>
+            <td>{{range .Artist.Members}}{{.}}, {{end}}</td>
+        </tr>
+        <tr>
+            <td><strong>Дата создания:</strong></td>
+            <td>{{.Artist.CreationDate}}</td>
+        </tr>
+        <tr>
+            <td><strong>Первый альбом:</strong></td>
+            <td>{{.Artist.FirstAlbum}}</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th colspan="2">Связи</th>
+        </tr>
+        {{range $location, $dates := .Relation.DatesLocations}}
+            <tr>
+                <td><strong>{{$location}}:</strong></td>
+                <td>
+                    <ul class="relation-list">
+                        {{range $dates}}
+                            <li class="relation-item">{{.}}</li>
+                        {{end}}
+                    </ul>
+                </td>
+            </tr>
+        {{end}}
+    </table>
+</div>
 </body>
 </html>
