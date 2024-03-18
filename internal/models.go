@@ -1,4 +1,4 @@
-package groupie_tracker
+package internal
 
 type Artist struct {
 	ID           int      `json:"id"`

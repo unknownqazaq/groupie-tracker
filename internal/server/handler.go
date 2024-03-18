@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
-	"groupie-tracker"
+	"groupie-tracker/internal"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -44,7 +44,7 @@ func HandleArtists(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fetchArtistData(artistID int) (*groupie_tracker.Artist, error) {
+func fetchArtistData(artistID int) (*internal.Artist, error) {
 	artistIDStr := strconv.Itoa(artistID)
 	resp, err := http.Get(artistsURL + artistIDStr)
 	if err != nil {
@@ -52,7 +52,7 @@ func fetchArtistData(artistID int) (*groupie_tracker.Artist, error) {
 	}
 	defer resp.Body.Close()
 
-	var artistData *groupie_tracker.Artist
+	var artistData *internal.Artist
 	if err := json.NewDecoder(resp.Body).Decode(&artistData); err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func fetchArtistData(artistID int) (*groupie_tracker.Artist, error) {
 	return artistData, nil
 }
 
-func fetchRelationData(artistID int) (*groupie_tracker.Relation, error) {
+func fetchRelationData(artistID int) (*internal.Relation, error) {
 	artistIDStr := strconv.Itoa(artistID)
 	resp, err := http.Get(relationURL + artistIDStr)
 	if err != nil {
@@ -68,7 +68,7 @@ func fetchRelationData(artistID int) (*groupie_tracker.Relation, error) {
 	}
 	defer resp.Body.Close()
 
-	var relationData *groupie_tracker.Relation
+	var relationData *internal.Relation
 	if err := json.NewDecoder(resp.Body).Decode(&relationData); err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Создаем структуру, содержащую информацию об артисте и связях
-		artistInfo := &groupie_tracker.ArtistInfo{
+		artistInfo := &internal.ArtistInfo{
 			Artist:   artistData,
 			Relation: relationData,
 		}
