@@ -113,6 +113,10 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 			Relation: relationData,
 		}
 
+		if artistInfo.Relation.DatesLocations == nil {
+			http.Error(w, "Status bad Request", http.StatusBadRequest)
+			return
+		}
 		if err := tmpl.Execute(w, artistInfo); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
