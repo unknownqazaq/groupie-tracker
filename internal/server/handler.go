@@ -97,8 +97,15 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if r.Method == http.MethodGet {
 
+	// Проверяем наличие информации об артисте
+	if artistData.ID == 0 {
+		http.Error(w, "Status Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	// Проверяем метод запроса
+	if r.Method == http.MethodGet {
 		// Отображаем HTML шаблон с данными об артисте и связях
 		tmplPath := filepath.Join("internal", "template", "artistInfo.html")
 		tmpl, err := template.ParseFiles(tmplPath)
@@ -113,10 +120,6 @@ func HandleArtistInfo(w http.ResponseWriter, r *http.Request) {
 			Relation: relationData,
 		}
 
-		if artistInfo.Relation.DatesLocations == nil {
-			http.Error(w, "Status bad Request", http.StatusBadRequest)
-			return
-		}
 		if err := tmpl.Execute(w, artistInfo); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -11,6 +12,7 @@ type Server struct {
 }
 
 func (s *Server) Run(port string) error {
+	fmt.Println("Server run")
 	router := SetupRoutes()
 
 	s.httpServer = &http.Server{
